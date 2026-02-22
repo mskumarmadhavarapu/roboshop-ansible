@@ -4,7 +4,7 @@
   vars:
     sg_id: sg-080e50b9c818a24d5
     ami_id: ami-0220d79f3f480ecf5
-    # domain_name: mskdaws88s.online
+    domain_name: mskdaws88s.online
     env: dev
     instances:
     - monogodb
@@ -27,3 +27,14 @@
   - name: print the output  
     ansible.builtin.debug:
       msg: "{{ ec2_output }}"
+
+  - name: create r53 records
+    amazon.aws.route53:
+    state: present
+    zone: "{{ domain_name }}"
+    record: "{{ item.item }}-{{ env }}.{{ domain_name }}" #monogodb-env.mskdaws88s.online
+    type: A
+    ttl: 1
+    value: "{{ item.instances[0].private_ip_address }}"
+    wait: true
+  loop: "{{ ec2_instance.results }}"
