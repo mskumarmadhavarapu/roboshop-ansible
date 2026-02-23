@@ -1,0 +1,6 @@
+- name: catalogue configure
+  hosts: catalogue
+  become: yes
+  tasks:
+  - name: 
+  
