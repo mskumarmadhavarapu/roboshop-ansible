@@ -7,7 +7,7 @@
     domain_name: mskdaws88s.online
     env: dev
     instances:
-    - monogodb
+    - mongodb
     - catalogue 
   tasks:
   - name: create ec2 instance
