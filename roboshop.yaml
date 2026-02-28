@@ -89,4 +89,5 @@
       name: "{{ item }}-{{ env }}"
       wait: false
     loop: "{{ instances }}"
-    when: action == "destroy"
+    when: action == "destroy"/
+    
