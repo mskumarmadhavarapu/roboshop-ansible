@@ -21,8 +21,13 @@
       image_id: "{{ ami_id }}"
       name: "{{ item }}-{{ env }}"
       exact_count: 1
-      count_tag:
-      nme: "{{ item }}-{{ env }}"
+      filters:
+      "tag:Name": "{{ item }}-{{ env }}"
+      instance-state-name:
+        - pending
+        - running
+        - stopping
+        - stopped
       tags:
         Project: roboshop
         Component: "{{ item }}"
