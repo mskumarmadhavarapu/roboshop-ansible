@@ -20,6 +20,9 @@
       security_group: "{{ sg_id }}"
       image_id: "{{ ami_id }}"
       name: "{{ item }}-{{ env }}"
+      exact_count: 1
+      count_tag:
+      Name: "{{ item }}-{{ env }}"
       tags:
         Project: roboshop
         Component: "{{ item }}"
