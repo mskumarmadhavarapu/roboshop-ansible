@@ -22,7 +22,7 @@
       name: "{{ item }}-{{ env }}"
       exact_count: 1
       count_tag:
-      Name: "{{ item }}-{{ env }}"
+      nme: "{{ item }}-{{ env }}"
       tags:
         Project: roboshop
         Component: "{{ item }}"
