@@ -22,12 +22,7 @@
       name: "{{ item }}-{{ env }}"
       exact_count: 1
       filters:
-        tag:Name: "{{ item }}-{{ env }}"
-      instance-state-name:
-        - pending
-        - running
-        - stopping
-        - stopped
+        "tag:Name": "{{ item }}-{{ env }}"    
       tags:
         Project: roboshop
         Component: "{{ item }}"
