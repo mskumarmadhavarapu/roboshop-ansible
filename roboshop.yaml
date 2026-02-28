@@ -1,5 +1,5 @@
 # ansible-playbook -i localhost,   -e '{"instances":["mongodb","catalogue","redis","user","cart",
-# "mysql","shipping","rabbitmq","payment","frontend"]}'  -e action=destroy roboshop.yaml
+# "mysql","shipping","rabbitmq","payment","frontend"]}'  -e operator=destroy roboshop.yaml
 - name: create ec2 and r53 records
   hosts: all
   connection: local
@@ -8,7 +8,7 @@
     ami_id: ami-0220d79f3f480ecf5
     domain_name: mskdaws88s.online
     env: dev
-    action: create
+    operator: create
     instances:
     - mongodb
     - catalogue 
@@ -22,7 +22,7 @@
       name: "{{ item }}-{{ env }}"
       exact_count: 1
       filters:
-      "tag:Name": "{{ item }}-{{ env }}"
+        tag:Name: "{{ item }}-{{ env }}"
       instance-state-name:
         - pending
         - running
@@ -35,12 +35,12 @@
         Nmae: "{{ item }}-{{ env }}"
     loop: "{{ instances }}"
     register: ec2_output
-    when: action == "create"
+    when: operator == "create"
     
   - name: print the output  
     ansible.builtin.debug:
       msg: "{{ ec2_output }}"
-    when: action == "create"
+    when: operator == "create"
 
   - name: create r53 records
     amazon.aws.route53:
@@ -52,7 +52,7 @@
       value: "{{ item.instances[0].private_ip_address }}"
       wait: true
     loop: "{{ ec2_output.results }}"
-    when: action == "create"
+    when: operator == "create"
 
   - name: create r53 records for frontend
     amazon.aws.route53:
@@ -66,7 +66,7 @@
     loop: "{{ ec2_output.results }}"
     when: # and
     - item.item == "frontend"
-    - action == "create"
+    - operator == "create"
 
     ### DESTROY ###
   - name: delete r53 records for frontend
@@ -79,7 +79,7 @@
     loop: "{{ instances }}"
     when:  # and
     - item == "frontend"
-    - action == "destroy"
+    - operator == "destroy"
 
   - name: delete r53 records
     amazon.aws.route53:
@@ -89,7 +89,7 @@
       type: A
       ttl: 1
     loop: "{{ instances }}"
-    when: action == "destroy"
+    when: operator == "destroy"
 
   - name: delete ec2 instance
     amazon.aws.ec2_instance:
@@ -97,4 +97,4 @@
       name: "{{ item }}-{{ env }}"
       wait: false
     loop: "{{ instances }}"
-    when: action == "destroy"
+    when: operator == "destroy"
